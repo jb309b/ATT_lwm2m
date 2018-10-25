@@ -211,7 +211,8 @@ const cmd_entry fac_command_table[] =
   0, "MON",         "mon           Enter interactive monitor mode",            command_iotmon,
   0, "DEBUG",       "DEBUG X V     Set or Clear debug flag ",                  command_dbg,
   0, "PAUSE",       "Pause #       program execution for # seconds ",          command_pause,
-  0, "EXIT",        "exit          End Program execution",                     command_exit
+  0, "EXIT",        "exit          End Program execution",                     command_exit,
+  0, "COAP_TEST",   "coap Y X Z    Tx data Y times every X secs from device Z",command_coap
   };
 #define _MAX_IOTCOMMANDS	(sizeof(fac_command_table)/sizeof(cmd_entry))
 
@@ -924,6 +925,35 @@ int command_adc(int argc, const char * const * argv )
 
 //  tx2m2x Y X Z  Tx data Y times every X secs from device Z
 int command_tx2m2x(int argc __attribute__((unused)), const char * const * argv )
+{
+    char*  sensor=NULL;
+    int    i, interval;
+    int    done, iterations;
+
+    done=0;
+    if( argc == 4 ) {
+        sensor    = (char*)argv[3]; 
+        interval  = (unsigned char)atoi(argv[2]);     //frequency in seconds
+        iterations  = (unsigned char)atoi(argv[1]);   //nbr of times to send data
+        }
+    if( sensor != NULL ) {
+        for (i=0; i<_max_m2xfunctions; i++) {
+            if ( !strcmp((m2xfunctions[i]).name,strupr(sensor)) ) {
+                (m2xfunctions[i]).func(interval, iterations);
+                done=1;
+                }
+            }
+        }
+    if( !done ){
+        printf("Need to specify a sensor, one of:\n");
+        for (i=0; i<_max_m2xfunctions-1; i++) 
+            printf(" - %s\n",(m2xfunctions[i]).name);
+        printf("Command Format: tx2m2x <count> <frequency> <sensor>\n");
+        }
+}
+
+//  coap Y X Z  Tx data Y times every X secs from device Z
+int command_coap(int argc __attribute__((unused)), const char * const * argv )
 {
     char*  sensor=NULL;
     int    i, interval;
