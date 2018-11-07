@@ -1,3 +1,14 @@
+#To Do in this commit
+##1. explore the MAL manager
+
+
+
+
+
+
+
+
+
 # Starter Kit 2 (SK2) based on the WNC M18Qx 
 
 ## M18QxIotMonitor Overview
